@@ -6,49 +6,37 @@
         <script src="script.js" type="module"></script>
         <script src="https://kit.fontawesome.com/48764efa36.js" crossorigin="anonymous"></script>
         <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;900&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;900&display=swap" rel="stylesheet">
     </head>
     <body>
-    <h1>Select Your Path</h1>
-    <div id="album-rotator">
-        <div id="album-rotator-holder">
-            <a class="album-item" href="#">
-                <span class="album-details">
-                    <span class="icon"><i class="far fa-at"></i> smpnjn</span>
-                    <span class="title">Some</span>
-                    <span class="subtitle">Title</span>
-                    <span class="subtext">Some text to describe this item</span>
-                </span>
-            </a>
-            <a class="album-item" href="#">
-                <span class="album-details">
-                    <span class="title">Another</span>
-                    <span class="subtitle">Title</span>
-                    <span class="subtext">Some text to describe this item</span>
-                </span>
-            </a>
-            <a class="album-item" href="#">
-                <span class="album-details">
-                    <span class="title">Finally</span>
-                    <span class="subtitle">We Go</span>
-                    <span class="subtext">Some text to describe this item</span>
-                </span>
-            </a>
-            <a class="album-item" href="#">
-                <span class="album-details">
-                    <span class="title">And</span>
-                    <span class="subtitle">One More</span>
-                    <span class="subtext">Some text to describe this item</span>
-                </span>
-            </a>
-            <a class="album-item" href="#">
-                <span class="album-details">
-                    <span class="title">And</span>
-                    <span class="subtitle">Finally..</span>
-                    <span class="subtext">Some text to describe this item</span>
-                </span>
-            </a>
+        <div id="content">
+            <h1>Welcome to Dynamic Art</h1>
+            <div>  
+                <h2>Size</h2>
+                <input id="range" type="range" min="-1" max="1" step="0.05" value="1" />
+            </div>
+            <div>
+                <h2>Definition</h2>
+                <input id="veins" type="range" min="0.1" max="20" step="0.05" value="20" />
+            </div>
+            <div>
+                <h2>Go Crazy</h2>
+                <input id="crazy" type="range" min="1" max="600" step="1" value="1" />
+            </div>
+            <div>
+                <h2>Recolor</h2>
+                <div class="color red" data-id="0"></div>
+                <div class="color blue" data-id="1"></div>
+                <div class="color orange" data-id="2"></div>
+            </div>
         </div>
-    </div>
+        <div id="art">
+            Art by <a href="https://twitter.com/smpnjn">@smpnjn</a>
+        </div>
+        <div id="click">
+            <i class="fal fa-hand-pointer"></i> Click Me
+        </div>
+        <canvas id="canvas"></canvas>
     </body>
 </html>
