@@ -16,9 +16,6 @@ const randomInteger = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 const config = {
-    individualItem: '.button', // class of individual item
-    carouselId: '#album-rotator', // carousel selector
-    carouselHolderId: '#album-rotator-holder', // carousel should be <div id="carouselId"><div id="carouselHolderId">{items}</div></div>
     colors: [
         { low: rgb(127,68,255), high: rgb(225,68,90) },
         { low: rgb(225, 109, 68), high: rgb(77, 115, 241) },
@@ -27,7 +24,18 @@ const config = {
 }
 
 // Async function for generating webGL waves
-const createWave = async function(colors) {      
+const createArt = async function(colors) {    
+    // For tracking status
+    let reduceVector;
+    let increasePressure;
+    let reducePressure;
+    let prevX = 0;
+    let prevY = 0;
+    let curValueX = 0;
+    let curValueY = 0;
+    let mouseEnterX = 0;
+    let mouseEnterY = 0;
+
     // Import all the fragment and vertex shaders
     const noise = await loader('./shaders/noise.glsl');
     const fragment = await loader('./shaders/fragment.glsl');
@@ -40,14 +48,6 @@ const createWave = async function(colors) {
         antialias: true, 
         alpha: true,
         canvas: canvas
-    });
-    
-    document.querySelectorAll('.color').forEach(function(item) {
-        item.addEventListener('click', function(e) {
-            let i = parseFloat(this.getAttribute('data-id'));
-            mesh.material.uniforms.u_highColor.value = config.colors[i].high;
-            mesh.material.uniforms.u_lowColor.value = config.colors[i].low;
-        });
     });
     
     // Get el width and height
@@ -65,8 +65,6 @@ const createWave = async function(colors) {
     // Check on colors to use
     let high = config.colors[i].high; 
     let low = config.colors[i].low;
-
-    console.log(high, low);
 
     // Create a plane, and pass that through to our shaders
     let geometry = new THREE.PlaneGeometry(600, 600, 100, 100);
@@ -94,17 +92,8 @@ const createWave = async function(colors) {
     let mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(0, 0, -300);
     scene.add(mesh);
-    let reduceVector;
-    let increasePressure;
-    let reducePressure;
-    let prevX = 0;
-    let prevY = 0;
-    let curValueX = 0;
-    let curValueY = 0;
-    let mouseEnterX = 0;
-    let mouseEnterY = 0;
-    let mousePressure = 0;
 
+    /* event listeners */
     document.getElementById('range').addEventListener('input', function(e) {
         mesh.material.uniforms.u_manipulate.value = this.value;
     })
@@ -114,6 +103,15 @@ const createWave = async function(colors) {
     document.getElementById('crazy').addEventListener('input', function(e) {
         mesh.material.uniforms.u_goCrazy.value = this.value;
     })
+
+    document.querySelectorAll('.color').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            let i = parseFloat(this.getAttribute('data-id'));
+            mesh.material.uniforms.u_highColor.value = config.colors[i].high;
+            mesh.material.uniforms.u_lowColor.value = config.colors[i].low;
+        });
+    });
+    
 
     window.addEventListener('resize', function(e) {
         elWidth = window.innerWidth;
@@ -133,7 +131,8 @@ const createWave = async function(colors) {
         mouseEnterX = e.pageX;
         mouseEnterY = e.pageY;
         clearInterval(reduceVector);
-    })
+    });
+
     document.body.addEventListener('pointermove', function(e) {
         if(typeof reduceVector !== "undefined") {
             clearInterval(reduceVector);
@@ -144,6 +143,7 @@ const createWave = async function(colors) {
         let mouseMoveY = mouseEnterY - e.pageY;
         mesh.material.uniforms.u_mouse.value = new THREE.Vector2(prevX + (mouseMoveX / elWidth), prevY + (mouseMoveY / elHeight));
     });
+    
     document.getElementById('canvas').addEventListener('pointerdown', function(e) {
         if(typeof reducePressure !== "undefined") clearInterval(reducePressure);
         increasePressure = setInterval(function() {
@@ -152,6 +152,7 @@ const createWave = async function(colors) {
             }
         },1000/60);
     });
+
     document.getElementById('canvas').addEventListener('pointerup', function(e) {
         if(typeof increasePressure !== "undefined") clearInterval(increasePressure);
         reducePressure = setInterval(function() {
@@ -160,6 +161,9 @@ const createWave = async function(colors) {
             }
         },1000/60);
     });
+    
+    // When the user leaves the canvas we will reset the position so we don't end up adding up
+    // more and more movement until the effect stops working.
     document.body.addEventListener('pointerleave', function(e) {
         reduceVector = setInterval(function() {
             let startXNeg, startXPos, startYNeg, startYPos;
@@ -204,6 +208,7 @@ const createWave = async function(colors) {
             }
         }, 1000/60);
     });
+
     // On hover effects for each item
     let enterTimer, exitTimer;
     document.getElementById('canvas').addEventListener('mouseenter', function(e) {
@@ -255,5 +260,5 @@ const createWave = async function(colors) {
 }
 
 document.addEventListener("DOMContentLoaded", function(e) {
-    createWave(config.individualItem, config.colors);
+    createArt();
 });
